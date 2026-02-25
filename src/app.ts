@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 import { httpLogger } from "./middlewares/loggerMiddle.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app: Application = express();
 
@@ -24,6 +25,9 @@ app.get("/health", (req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+//this mounts all user routes to the /api/v1/users path
+app.use("/api/v1/users", userRoutes);
 
 app.use(errorHandler); //global error handler, should be last middleware
 
