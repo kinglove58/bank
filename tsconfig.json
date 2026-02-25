@@ -1,16 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",           /* The modern standard */
-    "moduleResolution": "NodeNext", /* Resolves imports the modern Node way */
+    "module": "NodeNext" /* The modern standard */,
+    "moduleResolution": "NodeNext" /* Resolves imports the modern Node way */,
     "rootDir": "./src",
     "outDir": "./dist",
-    "strict": true,                 /* The most important flag */
-    "noImplicitAny": true,          /* Prevents lazy typing */
+    "strict": true /* The most important flag */,
+    "noImplicitAny": true /* Prevents lazy typing */,
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
