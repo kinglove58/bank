@@ -6,7 +6,7 @@ const userService = new UserService();
 export class UserController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      //get the data from the req (zod has verifield)
+      //get the data from the req (zod has verified)
       const userData = req.body;
 
       //pass the data to the service layer to handle the business logic
@@ -25,7 +25,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      //if the service throw an error
+      //if the service throws an error
       next(error);
     }
   }

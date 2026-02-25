@@ -6,7 +6,7 @@ import { validate } from "../middlewares/validateResource.js";
 const router = Router();
 const userController = new UserController();
 
-//POST/register
+// POST /register
 //The Request travels left to right: Route -> zod validation -> controller
 
 router.post(
