@@ -11,7 +11,7 @@ const app: Application = express();
 app.use(helmet()); //security header first
 app.use(cors()); //enable CORS for all routes
 app.use(express.json()); //parse json body
-app.use(httpLogger)
+app.use(httpLogger);
 
 // 2. Health Check Endpoint
 // In a production environment (AWS, Kubernetes, Docker),
@@ -26,8 +26,6 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use(errorHandler); //global error handler, should be last middleware
-
-
 
 //we DO NOT call app.listen() here because we want to separate the app setup from the server startup
 export default app;

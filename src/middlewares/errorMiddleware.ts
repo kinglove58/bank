@@ -8,6 +8,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
+ 
   let statusCode = 500;
   let message = "Internal Server Error";
 
