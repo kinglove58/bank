@@ -27,9 +27,20 @@ export class AccountRepository {
 
   //we will add a create method later
 
-  async create(data: any): Promise<Account> {
-    return await prisma.account.create({
-      data,
+  async findByAccountNumber(accountNumber: string): Promise<Account | null> {
+    return await prisma.account.findUnique({
+      where: { accountNumber },
     });
+  }
+
+  async createAccount(userId: number, accountNumber: string, type: 'SAVINGS' | 'CHECKING'): Promise<Account> {
+    return await prisma.account.create({
+        data:{
+            userId: userId, 
+            accountNumber: accountNumber, 
+            type: type, 
+            balance: 0.0,
+        }
+    })
   }
 }
