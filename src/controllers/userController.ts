@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService.js";
+import { AuthRequest } from "../middlewares/authMiddleware.js";
 
 const userService = new UserService();
 
@@ -26,6 +27,42 @@ export class UserController {
       });
     } catch (error) {
       //if the service throw an error
+      next(error);
+    }
+  }
+
+  async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const loginData = req.body;
+
+      const result = await userService.loginUser(loginData);
+
+      res.status(200).json({
+        status: "success",
+        message: "User logged in successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProfile(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      //because it the requireAuth middleware, we KNOW req.user exists
+      const userId = req.user?.id;
+
+      //now we could use the this ID  to fetch their bank accounts from the db
+      // for now, let's just prove it works:
+
+      res.status(200).json({
+        status: "success",
+        message: "User profile fetched successfully",
+        data: {
+          userid: userId,
+        },
+      });
+    } catch (error) {
       next(error);
     }
   }

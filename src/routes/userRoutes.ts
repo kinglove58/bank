@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController.js";
-import { RegisterUserSchema } from "../types/user.dto.js";
+import { loginUserSchema, RegisterUserSchema } from "../types/user.dto.js";
 import { validate } from "../middlewares/validateResource.js";
+import { requireAuth } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 const userController = new UserController();
@@ -13,6 +14,18 @@ router.post(
   "/register",
   validate(RegisterUserSchema),
   userController.register.bind(userController),
+);
+
+router.post(
+  "/login",
+  validate(loginUserSchema),
+  userController.login.bind(userController),
+);
+
+router.post(
+  "/profile",
+  requireAuth,
+  userController.getProfile.bind(userController),
 );
 
 export default router;
