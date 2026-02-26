@@ -5,6 +5,8 @@ import cors from "cors";
 import { httpLogger } from "./middlewares/loggerMiddle.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
+import rateLimit from "express-rate-limit";
+import accountRoutes from "./routes/accountRoutes.js";
 
 const app: Application = express();
 
@@ -13,6 +15,17 @@ app.use(helmet()); //security header first
 app.use(cors()); //enable CORS for all routes
 app.use(express.json()); //parse json body
 app.use(httpLogger);
+
+//1. global rate limiter: protects the whole api from being spammed
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, //15 minutes
+  max: 100, //limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after 15 minutes",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api", globalLimiter);
 
 // 2. Health Check Endpoint
 // In a production environment (AWS, Kubernetes, Docker),
@@ -28,6 +41,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 //this mounts all user routes to the /api/v1/users path
 app.use("/api/v1/users", userRoutes);
+app.use('/api/v1/accounts', accountRoutes);
 
 app.use(errorHandler); //global error handler, should be last middleware
 

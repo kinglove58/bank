@@ -7,11 +7,42 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//1. we create a strict list of role 
+
+enum Role {
+  USER
+  ADMIN
+}
+
+//we define the type of account our bank offers
+enum AccountType {
+  SAVINGS
+  CHECKING
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   name      String
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  //2. WE ADD THE ROLE COLUMN TO THE USER MODEL AND MAKE user the default
+  role      Role      @default(USER)
+  //WE tell user you can own many accounts
+  accounts  Account[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
+
+model Account {
+  id            Int         @id @default(autoincrement())
+  accountNumber String      @unique //must be unique across the whole bank!
+  balance       Float       @default(0.0) //Everyone starts with 0
+  type          AccountType @default(SAVINGS) //default account type is savings
+  //3. the fK setup 
+  userId        Int // we tell prisma exactly hw these two tables link together
+  user          User        @relation(fields: [userId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+
