@@ -7,7 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-//1. we create a strict list of role 
+//1. we create a strict list of roles 
 
 enum Role {
   USER
@@ -38,8 +38,8 @@ model Account {
   accountNumber String      @unique //must be unique across the whole bank!
   balance       Float       @default(0.0) //Everyone starts with 0
   type          AccountType @default(SAVINGS) //default account type is savings
-  //3. the fK setup 
-  userId        Int // we tell prisma exactly hw these two tables link together
+  //3. the FK setup 
+  userId        Int // we tell prisma exactly how these two tables link together
   user          User        @relation(fields: [userId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

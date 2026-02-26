@@ -41,7 +41,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 //this mounts all user routes to the /api/v1/users path
 app.use("/api/v1/users", userRoutes);
-app.use('/api/v1/accounts', accountRoutes);
+app.use("/api/v1/accounts", accountRoutes);
 
 app.use(errorHandler); //global error handler, should be last middleware
 

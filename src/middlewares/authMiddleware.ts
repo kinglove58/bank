@@ -39,8 +39,8 @@ export const requireAuth = async (
     //verify automatically throws an error if the token is fake or expired
     const decoded = jwt.verify(token, secret) as { id: number };
 
-    //4. fetch the user from the vault to ensure they haven't been delleted
-    // and to fet their current role
+    //4. fetch the user from the vault to ensure they haven't been deleted
+    // and to fetch their current role
     const currentUser = await userRespository.findById(decoded.id);
 
     if (!currentUser) {
