@@ -31,4 +31,10 @@ export class UserRepository {
       where: { email },
     });
   }
+
+  async findById(id: number): Promise<User | null> {
+    return await prisma.user.findUnique({
+      where: { id },
+    });
+  }
 }
