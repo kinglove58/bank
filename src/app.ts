@@ -7,6 +7,7 @@ import { errorHandler } from "./middlewares/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import rateLimit from "express-rate-limit";
 import accountRoutes from "./routes/accountRoutes.js";
+import transactionRoutes from "./routes/transactionRoute.js";
 
 const app: Application = express();
 
@@ -42,6 +43,7 @@ app.get("/health", (req: Request, res: Response) => {
 //this mounts all user routes to the /api/v1/users path
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/accounts", accountRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
 
 app.use(errorHandler); //global error handler, should be last middleware
 
