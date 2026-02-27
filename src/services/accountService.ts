@@ -1,5 +1,6 @@
 import { AccountRepository } from "../repositories/accountRepository.js";
 import { generateAccountNumber } from "../utils/accountUtils.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export class AccountService {
   private accountRepository: AccountRepository;
@@ -20,15 +21,25 @@ export class AccountService {
   async createNewAccount(userId: number, type: "SAVINGS" | "CHECKING") {
     let isUnique = false;
     let newAccountNumber = "";
+    let attempt = 0;
+    const MAX_RETRIES = 5;
 
     //1. keep generating numbers until we find one that nobody has
-    while (!isUnique) {
+    while (!isUnique && attempt < MAX_RETRIES) {
       newAccountNumber = generateAccountNumber();
       const existingAccount =
         await this.accountRepository.findByAccountNumber(newAccountNumber);
       if (!existingAccount) {
         isUnique = true; //found the account number
       }
+      attempt++;
+    }
+
+    if (!isUnique) {
+      throw new ApiError(
+        500,
+        "Failed to generate unique account number after multiple attempts",
+      );
     }
 
     return await this.accountRepository.createAccount(
