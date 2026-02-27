@@ -20,6 +20,12 @@ enum AccountType {
   CHECKING
 }
 
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
@@ -34,15 +40,24 @@ model User {
 }
 
 model Account {
-  id            Int         @id @default(autoincrement())
-  accountNumber String      @unique //must be unique across the whole bank!
-  balance       Float       @default(0.0) //Everyone starts with 0
-  type          AccountType @default(SAVINGS) //default account type is savings
+  id            Int           @id @default(autoincrement())
+  accountNumber String        @unique //must be unique across the whole bank!
+  balance       Float         @default(0.0) //Everyone starts with 0
+  type          AccountType   @default(SAVINGS) //default account type is savings
   //3. the FK setup 
   userId        Int // we tell prisma exactly how these two tables link together
-  user          User        @relation(fields: [userId], references: [id])
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
+  transactions  Transaction[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
-
+model Transaction {
+  id          Int             @id @default(autoincrement())
+  amount      Float
+  type        TransactionType
+  description String?
+  accountId   Int
+  account     Account         @relation(fields: [accountId], references: [id])
+  createdAt   DateTime        @default(now())
+}

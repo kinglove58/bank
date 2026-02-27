@@ -26,4 +26,31 @@ export class AccountController {
       next(error);
     }
   }
+
+  async createAccount(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: "fail",
+          message: "Unauthorized",
+        });
+      }
+      //get validated data from the request body (account type)
+      const { type } = req.body;
+      //tell the service layer to create a new account for this user, and give it the type from the request body
+      const newAccount = await accountService.createNewAccount(
+        req.user.id,
+        type,
+      );
+
+      //send the shiny new account back to postman
+      res.status(201).json({
+        status: "success",
+        message: `${type} account created successfully`,
+        data: newAccount,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
