@@ -5,13 +5,13 @@ import { validate } from "../middlewares/validateResource.js";
 import { DepositSchema } from "../types/transaction.dto.js";
 
 const router = Router();
-const transationController = new TransactionController();
+const transactionController = new TransactionController();
 
 router.post(
   "/deposit",
   requireAuth,
   validate(DepositSchema),
-  transationController.deposit.bind(transationController),
+  transactionController.deposit.bind(transactionController),
 );
 
 export default router;
