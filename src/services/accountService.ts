@@ -22,7 +22,7 @@ export class AccountService {
     let isUnique = false;
     let newAccountNumber = "";
     let attempt = 0;
-    let MAX_RETRIES = 5;
+    const MAX_RETRIES = 5;
 
     //1. keep generating numbers until we find one that nobody has
     while (!isUnique && attempt < MAX_RETRIES) {

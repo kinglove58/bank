@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export class TransactionRepository {
   //safely deposit money
-  async deposit(accountId: number, amount: number, desciiption?: string) {
+  async deposit(accountId: number, amount: number, description?: string) {
     return await prisma.$transaction(async (tsx) => {
       //1. create the transaction record
       const transactionRecord = await tsx.transaction.create({
@@ -12,7 +12,7 @@ export class TransactionRepository {
           accountId: accountId,
           amount: amount,
           type: "DEPOSIT",
-          description: desciiption,
+          description: description,
         },
       });
 
@@ -20,7 +20,7 @@ export class TransactionRepository {
       const updateAccount = await tsx.account.update({
         where: { id: accountId },
         data: {
-          //prisma has a massive 'increment'
+          // Prisma has a native 'increment' operation for atomic balance updates
           balance: { increment: amount },
         },
       });

@@ -18,7 +18,7 @@ export class TransactionService {
   ) {
     //rule 1. no negative deposits
     if (amount <= 0) {
-      throw new ApiError(400, " Deposit amount must be greater than zero");
+      throw new ApiError(400, "Deposit amount must be greater than zero");
     }
 
     const account =
