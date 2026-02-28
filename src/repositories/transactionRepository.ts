@@ -39,4 +39,29 @@ export class TransactionRepository {
       };
     });
   }
+
+  async withdraw(accountId: number, amount: number, description?: string) {
+    return await prisma.$transaction(async (tsx) => {
+      const transactionRecord = await tsx.transaction.create({
+        data: {
+          accountId: accountId,
+          amount: amount,
+          type: "WITHDRAWAL",
+          description: description,
+        },
+      });
+
+      const updatedAccount = await tsx.account.update({
+        where: { id: accountId },
+        data: {
+          balance: { decrement: amount },
+        },
+      });
+
+      return {
+        transaction: transactionRecord,
+        newBalance: updatedAccount.balance,
+      };
+    });
+  }
 }
