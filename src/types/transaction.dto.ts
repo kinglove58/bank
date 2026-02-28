@@ -16,5 +16,18 @@ export const WithdrawalSchema = z.object({
   }),
 });
 
+export const transferSchema = z.object({
+  body: z.object({
+    senderAccountNumber: z
+      .string()
+      .length(10, "Sender account number must be 10 digits"),
+    receiverAccountNumber:
+      z.string().length(10, "Receiver account number must be 10 digits"),
+    amount: z.number().positive("Transfer amount must be greater than zero"),
+    description: z.string().optional(),
+  }),
+});
+
 export type DepositInput = z.infer<typeof DepositSchema>["body"];
 export type WithdrawalInput = z.infer<typeof WithdrawalSchema>["body"];
+export type TransferInput = z.infer<typeof transferSchema>["body"];

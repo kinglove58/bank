@@ -80,4 +80,50 @@ export class TransactionService {
       description,
     );
   }
+
+  async makeTransfer(
+    userId: number,
+    senderAccountNumber: string,
+    receiverAccountNumber: string,
+    amount: number,
+    description?: string,
+  ) {
+    //1. Basic validation
+    if (amount <= 0) {
+      throw new ApiError(400, "Transfer amount must be greater than zero");
+    }
+
+    //2. prevent transferring to the same account
+    if (senderAccountNumber === receiverAccountNumber) {
+      throw new ApiError(400, "Sender and receiver accounts must be different");
+    }
+
+    // sender account existence and ownership check
+    const senderAccount =
+      await this.accountRepository.findByAccountNumber(senderAccountNumber);
+    if (!senderAccount) {
+      throw new ApiError(404, "Sender account not found");
+    }
+
+    if (senderAccount.userId !== userId) {
+      throw new ApiError(
+        403,
+        "You don't have permission to transfer from this account",
+      );
+    }
+
+    const receiverAccount = await this.accountRepository.findByAccountNumber(
+      receiverAccountNumber,
+    );
+    if (!receiverAccount) {
+      throw new ApiError(404, "Receiver account not found");
+    }
+
+    return await this.transactionRepository.transfer(
+      senderAccount.id,
+      receiverAccount.id,
+      amount,
+      description,
+    );
+  }
 }
