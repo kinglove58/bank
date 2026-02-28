@@ -71,9 +71,13 @@ export class TransactionRepository {
           where: { id: accountId },
         });
 
+       if (!finalAccount) {
+         throw new Error(`Account with id ${accountId} not found after withdrawal`);
+       }
+
       return {
         transaction: transactionRecord,
-        newBalance: finalAccount?.balance,
+        newBalance: finalAccount.balance,
       };
     });
   }
