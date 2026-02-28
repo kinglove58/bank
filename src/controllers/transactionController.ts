@@ -87,7 +87,7 @@ export class TransactionController {
       } = req.body as TransferInput;
       const userId = req.user.id;
 
-      //excecution of the cross-account transfer
+      //execution of the cross-account transfer
       const result = await transactionService.makeTransfer(
         userId,
         senderAccountNumber,

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
-import { send } from "node:process";
+
 
 const datasourceUrl = process.env.DATABASE_URL;
 if (!datasourceUrl) {

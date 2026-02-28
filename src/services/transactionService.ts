@@ -1,4 +1,4 @@
-import { send } from "node:process";
+
 import { AccountRepository } from "../repositories/accountRepository.js";
 import { TransactionRepository } from "../repositories/transactionRepository.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -93,7 +93,7 @@ export class TransactionService {
       throw new ApiError(400, "Transfer amount must be greater than zero");
     }
 
-    //2. prevent transfering to the same account
+    //2. prevent transferring to the same account
     if (senderAccountNumber === receiverAccountNumber) {
       throw new ApiError(400, "Sender and receiver accounts must be different");
     }
