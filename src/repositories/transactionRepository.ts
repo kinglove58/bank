@@ -51,16 +51,29 @@ export class TransactionRepository {
         },
       });
 
-      const updatedAccount = await tsx.account.update({
-        where: { id: accountId },
+      const updatedAccount = await tsx.account.updateMany({
+        where: {
+          id: accountId,
+          balance: { gte: amount }, // gte means greater than or equal to, this ensures we don't overdraw
+        },
         data: {
           balance: { decrement: amount },
         },
       });
 
+      if (updatedAccount.count === 0) {
+        throw new Error(
+          `Transaction failed: Insufficient funds at the moment of processing`,
+        );
+      }
+
+       const finalAccount = await tsx.account.findUnique({
+          where: { id: accountId },
+        });
+
       return {
         transaction: transactionRecord,
-        newBalance: updatedAccount.balance,
+        newBalance: finalAccount?.balance,
       };
     });
   }
