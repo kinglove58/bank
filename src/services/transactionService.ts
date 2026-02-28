@@ -1,3 +1,4 @@
+
 import { AccountRepository } from "../repositories/accountRepository.js";
 import { TransactionRepository } from "../repositories/transactionRepository.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -37,6 +38,43 @@ export class TransactionService {
 
     // if all pass
     return await this.transactionRepository.deposit(
+      account.id,
+      amount,
+      description,
+    );
+  }
+
+  async makeWithdrawal(
+    userId: number,
+    accountNumber: string,
+    amount: number,
+    description?: string,
+  ) {
+    if (amount <= 0) {
+      throw new ApiError(400, "Withdrawal amount must be greater than zero");
+    }
+
+    //rule 2: The Existence check
+    const account =
+      await this.accountRepository.findByAccountNumber(accountNumber);
+    if (!account) {
+      throw new ApiError(404, "Account not found");
+    }
+
+    // rule 3: The security check
+
+    if (account.userId !== userId) {
+      throw new ApiError(
+        403,
+        "You don't have permission to withdraw from this account",
+      );
+    }
+
+    if (account.balance < amount) {
+      throw new ApiError(400, "Insufficient funds for this withdrawal");
+    }
+
+    return await this.transactionRepository.withdraw(
       account.id,
       amount,
       description,

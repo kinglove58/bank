@@ -39,4 +39,46 @@ export class TransactionRepository {
       };
     });
   }
+
+  async withdraw(accountId: number, amount: number, description?: string) {
+    return await prisma.$transaction(async (tsx) => {
+      const transactionRecord = await tsx.transaction.create({
+        data: {
+          accountId: accountId,
+          amount: amount,
+          type: "WITHDRAWAL",
+          description: description,
+        },
+      });
+
+      const updatedAccount = await tsx.account.updateMany({
+        where: {
+          id: accountId,
+          balance: { gte: amount }, // gte means greater than or equal to, this ensures we don't overdraw
+        },
+        data: {
+          balance: { decrement: amount },
+        },
+      });
+
+      if (updatedAccount.count === 0) {
+        throw new Error(
+          `Transaction failed: Insufficient funds at the moment of processing`,
+        );
+      }
+
+       const finalAccount = await tsx.account.findUnique({
+          where: { id: accountId },
+        });
+
+       if (!finalAccount) {
+         throw new Error(`Account with id ${accountId} not found after withdrawal`);
+       }
+
+      return {
+        transaction: transactionRecord,
+        newBalance: finalAccount.balance,
+      };
+    });
+  }
 }
