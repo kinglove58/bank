@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { send } from "node:process";
 
 const datasourceUrl = process.env.DATABASE_URL;
 if (!datasourceUrl) {
@@ -67,17 +68,78 @@ export class TransactionRepository {
         );
       }
 
-       const finalAccount = await tsx.account.findUnique({
-          where: { id: accountId },
-        });
+      const finalAccount = await tsx.account.findUnique({
+        where: { id: accountId },
+      });
 
-       if (!finalAccount) {
-         throw new Error(`Account with id ${accountId} not found after withdrawal`);
-       }
+      if (!finalAccount) {
+        throw new Error(
+          `Account with id ${accountId} not found after withdrawal`,
+        );
+      }
 
       return {
         transaction: transactionRecord,
         newBalance: finalAccount.balance,
+      };
+    });
+  }
+
+  async transfer(
+    senderAccountId: number,
+    receiverAccountId: number,
+    amount: number,
+    description?: string,
+  ) {
+    return await prisma.$transaction(async (tsx) => {
+      //1. atomic withdrawal
+      const senderUpdate = await tsx.account.updateMany({
+        where: { id: senderAccountId, balance: { gte: amount } },
+        data: { balance: { decrement: amount } },
+      });
+
+      if (senderUpdate.count === 0) {
+        throw new Error(
+          "Transfer failed: Insufficient funds in sender account at the moment of processing",
+        );
+      }
+
+      //deposit
+      await tsx.account.update({
+        where: { id: receiverAccountId },
+        data: { balance: { increment: amount } },
+      });
+
+      //ledger record money leaving sender
+      const senderRecord = await tsx.transaction.create({
+        data: {
+          accountId: senderAccountId,
+          amount: amount,
+          type: "TRANSFER",
+          description: description || "Outgoing Transfer",
+        },
+      });
+
+      // ledger record money arriving to the receiver
+      const receiverRecord = await tsx.transaction.create({
+        data: {
+          accountId: receiverAccountId,
+          amount: amount,
+          type: "TRANSFER",
+          description: description || "Incoming Transfer",
+        },
+      });
+
+      const finalSenderAccount = await tsx.account.findUnique({
+        where: { id: senderAccountId },
+      });
+
+      if (!finalSenderAccount) {
+        throw new Error(`Sender account with id ${senderAccountId} not found`);
+      }
+      return {
+        transaction: senderRecord,
+        newBalance: finalSenderAccount.balance,
       };
     });
   }

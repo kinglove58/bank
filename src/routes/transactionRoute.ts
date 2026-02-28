@@ -2,7 +2,11 @@ import { Router } from "express";
 import { TransactionController } from "../controllers/transactionController.js";
 import { requireAuth } from "../middlewares/authMiddleware.js";
 import { validate } from "../middlewares/validateResource.js";
-import { DepositSchema, WithdrawalSchema } from "../types/transaction.dto.js";
+import {
+  DepositSchema,
+  transferSchema,
+  WithdrawalSchema,
+} from "../types/transaction.dto.js";
 
 const router = Router();
 const transactionController = new TransactionController();
@@ -19,6 +23,13 @@ router.post(
   requireAuth,
   validate(WithdrawalSchema),
   transactionController.withdraw.bind(transactionController),
+);
+
+router.post(
+  "/transfer",
+  requireAuth,
+  validate(transferSchema),
+  transactionController.transfer.bind(transactionController),
 );
 
 export default router;
