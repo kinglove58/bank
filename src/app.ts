@@ -12,6 +12,7 @@ import transactionRoutes from "./routes/transactionRoute.js";
 const app: Application = express();
 
 //1. Global middleware
+
 app.use(helmet()); //security header first
 app.use(cors()); //enable CORS for all routes
 app.use(express.json()); //parse json body
