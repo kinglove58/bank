@@ -53,4 +53,42 @@ export class AccountController {
       next(error);
     }
   }
+
+  async getTransactions(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: "fail",
+          message: "Unauthorized",
+        });
+      }
+
+      const accountNumberParam = req.params.accountNumber;
+      const accountNumber = Array.isArray(accountNumberParam)
+        ? accountNumberParam[0]
+        : accountNumberParam;
+      const pageQuery = Array.isArray(req.query.page)
+        ? req.query.page[0]
+        : req.query.page;
+      const limitQuery = Array.isArray(req.query.limit)
+        ? req.query.limit[0]
+        : req.query.limit;
+      const page = Number(pageQuery) || 1;
+      const limit = Number(limitQuery) || 10;
+
+      const result = await accountService.getAccountTransactions(
+        req.user.id,
+        accountNumber,
+        page,
+        limit,
+      );
+
+      res.status(200).json({
+        status: "success",
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

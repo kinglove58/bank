@@ -48,4 +48,41 @@ export class AccountService {
       type,
     );
   }
+
+  async getAccountTransactions(
+    userId: number,
+    accountNumber: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const account =
+      await this.accountRepository.findByAccountNumber(accountNumber);
+    if (!account) {
+      throw new ApiError(404, "Account not found");
+    }
+
+    if (account.userId !== userId) {
+      throw new ApiError(
+        403,
+        "You do not have permission to access this account's transactions",
+      );
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [transactions, totalRecords] = await Promise.all([
+      this.accountRepository.findTransactionsByAccount(account.id, limit, skip),
+      this.accountRepository.countTransactions(account.id),
+    ]);
+
+    return {
+      transactions,
+      pagination: {
+        totalRecords,
+        currentPage: page,
+        totalPages: Math.ceil(totalRecords / limit),
+        hasNextPage: skip + limit < totalRecords,
+      },
+    };
+  }
 }

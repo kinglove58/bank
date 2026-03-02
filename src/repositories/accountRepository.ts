@@ -33,14 +33,37 @@ export class AccountRepository {
     });
   }
 
-  async createAccount(userId: number, accountNumber: string, type: 'SAVINGS' | 'CHECKING'): Promise<Account> {
+  async createAccount(
+    userId: number,
+    accountNumber: string,
+    type: "SAVINGS" | "CHECKING",
+  ): Promise<Account> {
     return await prisma.account.create({
-        data:{
-            userId: userId, 
-            accountNumber: accountNumber, 
-            type: type, 
-            balance: 0.0,
-        }
-    })
+      data: {
+        userId: userId,
+        accountNumber: accountNumber,
+        type: type,
+        balance: 0.0,
+      },
+    });
+  }
+
+  async findTransactionsByAccount(
+    accountId: number,
+    limit: number,
+    skip: number,
+  ) {
+    return await prisma.transaction.findMany({
+      where: { accountId },
+      take: limit,
+      skip: skip,
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async countTransactions(accountId: number) {
+    return await prisma.transaction.count({
+      where: { accountId },
+    });
   }
 }
