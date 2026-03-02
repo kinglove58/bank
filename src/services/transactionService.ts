@@ -1,4 +1,3 @@
-
 import { AccountRepository } from "../repositories/accountRepository.js";
 import { TransactionRepository } from "../repositories/transactionRepository.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -88,6 +87,9 @@ export class TransactionService {
     amount: number,
     description?: string,
   ) {
+    const finalDescription =
+      description ??
+      `Transfer of $${amount} from account ${senderAccountNumber} to account ${receiverAccountNumber}`;
     //1. Basic validation
     if (amount <= 0) {
       throw new ApiError(400, "Transfer amount must be greater than zero");
@@ -123,7 +125,7 @@ export class TransactionService {
       senderAccount.id,
       receiverAccount.id,
       amount,
-      description,
+      finalDescription,
     );
   }
 }

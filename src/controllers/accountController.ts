@@ -53,4 +53,34 @@ export class AccountController {
       next(error);
     }
   }
+
+  async getTransactions(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: "fail",
+          message: "Unauthorized",
+        });
+      }
+
+      // Use values already validated and transformed by GetTransactionsSchema
+      const { accountNumber } = req.params as { accountNumber: string };
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+
+      const result = await accountService.getAccountTransactions(
+        req.user.id,
+        accountNumber,
+        page,
+        limit,
+      );
+
+      res.status(200).json({
+        status: "success",
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
