@@ -23,6 +23,7 @@ export const GetTransactionsSchema = z.object({
       .string()
       .optional()
       .transform((val) => Number(val ?? 10)),
+    type: z.enum(["DEPOSIT", "WITHDRAWAL", "TRANSFER"]).optional(),
   }),
 });
 

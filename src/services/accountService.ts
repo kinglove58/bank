@@ -54,6 +54,7 @@ export class AccountService {
     accountNumber: string,
     page: number = 1,
     limit: number = 10,
+    type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER",
   ) {
     const account =
       await this.accountRepository.findByAccountNumber(accountNumber);
@@ -71,8 +72,13 @@ export class AccountService {
     const skip = (page - 1) * limit;
 
     const [transactions, totalRecords] = await Promise.all([
-      this.accountRepository.findTransactionsByAccount(account.id, limit, skip),
-      this.accountRepository.countTransactions(account.id),
+      this.accountRepository.findTransactionsByAccount(
+        account.id,
+        limit,
+        skip,
+        type,
+      ),
+      this.accountRepository.countTransactions(account.id, type),
     ]);
 
     return {

@@ -52,18 +52,22 @@ export class AccountRepository {
     accountId: number,
     limit: number,
     skip: number,
+    type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER",
   ) {
     return await prisma.transaction.findMany({
-      where: { accountId },
+      where: { accountId, ...(type && { type }) },
       take: limit,
       skip: skip,
       orderBy: { createdAt: "desc" },
     });
   }
 
-  async countTransactions(accountId: number) {
+  async countTransactions(
+    accountId: number,
+    type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER",
+  ) {
     return await prisma.transaction.count({
-      where: { accountId },
+      where: { accountId, ...(type && { type }) },
     });
   }
 }
