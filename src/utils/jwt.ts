@@ -6,7 +6,7 @@ if (!secret) {
   throw new Error("JWT_SECRET is not set");
 }
 
-const expiresIn = (process.env.JWT_EXPIRES_IN ??
+const expiresIn = (config.jwtExpiresIn ??
   "1d") as jwt.SignOptions["expiresIn"];
 
 export const generateToken = (userId: number): string => {
