@@ -65,13 +65,17 @@ export class AccountController {
 
       // Use values already validated and transformed by GetTransactionsSchema
       const { accountNumber } = req.params as { accountNumber: string };
-      const {page, limit, type} = req.query as any;
+      const {page, limit, type} = req.query as {
+        page?: number;
+        limit?: number;
+        type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
+      }
 
       const result = await accountService.getAccountTransactions(
         req.user.id,
         accountNumber,
-        Number(page),
-        Number(limit),
+        Number(page ?? 1),
+        Number(limit ?? 10),
         type,
       );
 
