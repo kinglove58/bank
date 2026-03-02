@@ -60,4 +60,10 @@ model Transaction {
   accountId   Int
   account     Account         @relation(fields: [accountId], references: [id])
   createdAt   DateTime        @default(now())
+
+  //the performance optimization
+
+  @@index([accountId])
+  @@index([type])
+  @@index([createdAt])
 }
