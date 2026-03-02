@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository.js";
 import { Role } from "@prisma/client";
+import { config } from "../config/env.js";
 
 const userRespository = new UserRepository();
 
@@ -31,7 +32,7 @@ export const requireAuth = async (
     const token = authHeader.split(" ")[1];
 
     //verify the token using our secret code
-    const secret = process.env.JWT_SECRET;
+    const secret = config.jwtSecret;
     if (!secret) {
       throw new Error("JWT_SECRET is missing");
     }

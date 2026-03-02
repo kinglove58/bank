@@ -2,14 +2,15 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Account } from "@prisma/client";
 
 const datasourceUrl = process.env.DATABASE_URL;
+const directUrl = process.env.DIRECT_URL;
 
 if (!datasourceUrl) {
   throw new Error("DATABASE_URL environment variable is not set");
 }
-if (!datasourceUrl) {
-  throw new Error("DATABASE_URL environment variable is not set");
+if (!directUrl) {
+  throw new Error("DIRECT_URL environment variable is not set");
 }
-const adapter = new PrismaPg({ connectionString: datasourceUrl });
+const adapter = new PrismaPg({ connectionString: datasourceUrl, directUrl });
 const prisma = new PrismaClient({ adapter });
 
 export class AccountRepository {
