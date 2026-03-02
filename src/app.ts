@@ -8,12 +8,11 @@ import userRoutes from "./routes/userRoutes.js";
 import rateLimit from "express-rate-limit";
 import accountRoutes from "./routes/accountRoutes.js";
 import transactionRoutes from "./routes/transactionRoute.js";
-import morgan from "morgan";
 
 const app: Application = express();
 
 //1. Global middleware
-app.use(morgan('dev'));
+
 app.use(helmet()); //security header first
 app.use(cors()); //enable CORS for all routes
 app.use(express.json()); //parse json body
