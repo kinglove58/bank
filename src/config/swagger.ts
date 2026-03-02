@@ -1,5 +1,8 @@
 import swaggerJSDoc from "swagger-jsdoc";
 
+const productionUrl =
+  process.env.RENDER_EXTERNAL_URL ?? "https://bank-xw7m.onrender.com";
+
 const options: swaggerJSDoc.Options = {
   definition: {
     openapi: "3.0.3",
@@ -11,12 +14,12 @@ const options: swaggerJSDoc.Options = {
 
     servers: [
       {
-        url: "http://localhost:3000",
-        description: "Local development server",
+        url: productionUrl,
+        description: "Production server",
       },
       {
-        url: "https://bank-xw7m.onrender.com",
-        description: "Production server",
+        url: "http://localhost:3000",
+        description: "Local development server",
       },
     ],
     components: {
