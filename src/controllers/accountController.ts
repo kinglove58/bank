@@ -63,18 +63,10 @@ export class AccountController {
         });
       }
 
-      const accountNumberParam = req.params.accountNumber;
-      const accountNumber = Array.isArray(accountNumberParam)
-        ? accountNumberParam[0]
-        : accountNumberParam;
-      const pageQuery = Array.isArray(req.query.page)
-        ? req.query.page[0]
-        : req.query.page;
-      const limitQuery = Array.isArray(req.query.limit)
-        ? req.query.limit[0]
-        : req.query.limit;
-      const page = Number(pageQuery) || 1;
-      const limit = Number(limitQuery) || 10;
+      // Use values already validated and transformed by GetTransactionsSchema
+      const { accountNumber } = req.params as { accountNumber: string };
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
 
       const result = await accountService.getAccountTransactions(
         req.user.id,

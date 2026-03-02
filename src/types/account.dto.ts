@@ -27,4 +27,4 @@ export const GetTransactionsSchema = z.object({
 });
 
 export type CreateAccountInput = z.infer<typeof CreateAccountSchema>["body"];
-export type GetTransactionalInput = z.infer<typeof GetTransactionsSchema>;
+export type GetTransactionsInput = z.infer<typeof GetTransactionsSchema>;
