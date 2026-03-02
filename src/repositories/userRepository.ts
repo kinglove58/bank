@@ -3,11 +3,15 @@ import { PrismaClient, User } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const databaseUrl = process.env.DATABASE_URL;
+const directUrl = process.env.DIRECT_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set");
 }
+if (!directUrl) {
+  throw new Error("DIRECT_URL is not set");
+}
 
-const adapter = new PrismaPg({ connectionString: databaseUrl });
+const adapter = new PrismaPg({ connectionString: databaseUrl, directUrl });
 const prisma = new PrismaClient({ adapter });
 
 export class UserRepository {

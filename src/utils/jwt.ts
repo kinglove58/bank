@@ -1,11 +1,13 @@
 import jwt from "jsonwebtoken";
+import { config } from "../config/env.js";
 
-const secret = process.env.JWT_SECRET;
+const secret = config.jwtSecret;
 if (!secret) {
   throw new Error("JWT_SECRET is not set");
 }
 
-const expiresIn = (process.env.JWT_EXPIRES_IN ?? "1d") as jwt.SignOptions["expiresIn"];
+const expiresIn = (config.jwtExpiresIn ??
+  "1d") as jwt.SignOptions["expiresIn"];
 
 export const generateToken = (userId: number): string => {
   // jwt.sign() creates the wristband.
