@@ -7,3 +7,6 @@ node_modules
 logs/
 *.log
 npm-debug.log*
+
+.dish
+dish/
