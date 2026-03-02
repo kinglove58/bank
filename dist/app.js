@@ -8,12 +8,15 @@ import userRoutes from "./routes/userRoutes.js";
 import rateLimit from "express-rate-limit";
 import accountRoutes from "./routes/accountRoutes.js";
 import transactionRoutes from "./routes/transactionRoute.js";
+import { swaggerSpec } from "./config/swagger.js";
+import swaggerUi from "swagger-ui-express";
 const app = express();
 //1. Global middleware
 app.use(helmet()); //security header first
 app.use(cors()); //enable CORS for all routes
 app.use(express.json()); //parse json body
 app.use(httpLogger);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //1. global rate limiter: protects the whole api from being spammed
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, //15 minutes
@@ -23,9 +26,17 @@ const globalLimiter = rateLimit({
     legacyHeaders: false,
 });
 app.use("/api", globalLimiter);
-// 2. Health Check Endpoint
-// In a production environment (AWS, Kubernetes, Docker),
-// the infrastructure needs a route to ping to check if the API is alive.
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     tags: [System]
+ *     summary: Health check endpoint
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: API is healthy
+ */
 app.get("/health", (req, res) => {
     res.status(200).json({
         status: "success",
